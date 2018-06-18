@@ -15,7 +15,7 @@ ext {
             butterknife             : "8.5.1",
             rxlifecycle             : "1.0",
             rxlifecycle2            : "2.0.1",
-            dagger                  : "2.11",
+            dagger                  : "2.16",
             espressoSdkVersion      : "3.0.2",
             canarySdkVersion        : "1.5.1"
     ]

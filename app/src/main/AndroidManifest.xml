@@ -38,7 +38,7 @@
         </activity>
 
         <activity
-            android:name=".module.account.LoginActivity"
+            android:name=".module.account.ui.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             />
 
