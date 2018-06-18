@@ -17,9 +17,8 @@ import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.http.GlobalHttpHandler;
 import com.jess.arms.integration.ConfigModule;
 import com.miguan.newmimi.BuildConfig;
-import com.miguan.newmimi.model.Constant;
-import com.miguan.newmimi.model.http.HttpResponseCode;
-import com.miguan.newmimi.model.http.WrapperConverterFactory;
+import com.miguan.newmimi.app.http.HttpResponseCode;
+import com.miguan.newmimi.app.http.WrapperConverterFactory;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 

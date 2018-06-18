@@ -1,4 +1,4 @@
-package com.miguan.newmimi.model.http;
+package com.miguan.newmimi.app.http;
 
 import android.text.TextUtils;
 

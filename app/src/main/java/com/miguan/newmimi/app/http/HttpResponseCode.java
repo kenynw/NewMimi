@@ -1,4 +1,4 @@
-package com.miguan.newmimi.model.http;
+package com.miguan.newmimi.app.http;
 
 /**
  * 作者: liyu on  2018/1/30 0030 19:39

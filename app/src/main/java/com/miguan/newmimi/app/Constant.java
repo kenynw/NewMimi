@@ -1,4 +1,4 @@
-package com.miguan.newmimi.model;
+package com.miguan.newmimi.app;
 
 import com.miguan.newmimi.BuildConfig;
 
