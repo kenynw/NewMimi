@@ -5,22 +5,14 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 
-import com.alibaba.android.arouter.launcher.ARouter;
-import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
-import com.jess.arms.base.App;
 import com.jess.arms.base.delegate.AppLifecycles;
-import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.di.module.GlobalConfigModule;
 import com.jess.arms.http.GlobalHttpHandler;
 import com.jess.arms.integration.ConfigModule;
-import com.miguan.newmimi.BuildConfig;
 import com.miguan.newmimi.app.http.HttpResponseCode;
 import com.miguan.newmimi.app.http.WrapperConverterFactory;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -33,7 +25,6 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.HttpException;
-import timber.log.Timber;
 
 /**
  * Copyright (c) 2018 Miguan Inc All rights reserved.
@@ -113,49 +104,7 @@ public class GlobalConfiguration implements ConfigModule {
     @Override
     public void injectAppLifecycle(Context context, List<AppLifecycles> lifecycles) {
         //向Application的生命周期中注入一些自定义逻辑
-        lifecycles.add(new AppLifecycles() {
-            @Override
-            public void attachBaseContext(Context base) {
-//                MultiDex.install(base);  //这里比 onCreate 先执行,常用于 MultiDex 初始化,插件化框架的初始化
-            }
-
-            @Override
-            public void onCreate(Application application) {
-                initLog();
-                Utils.init(application);
-                initARouter(application);
-            }
-
-            private void initLog() {
-                if (BuildConfig.LOG_DEBUG) {
-                    Timber.plant(new Timber.DebugTree());
-                }
-            }
-
-            private void initCanary(Application application) {
-                if (LeakCanary.isInAnalyzerProcess(application)) {
-                    return;
-                }
-                if (application instanceof App) {
-                    AppComponent appComponent = ((App) application).getAppComponent();
-                    appComponent.extras().put(RefWatcher.class.getName(),
-                            BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
-                }
-            }
-
-            private void initARouter(Application application) {
-                if (AppUtils.isAppDebug(application.getPackageName())) {
-                    ARouter.openLog();
-                    ARouter.openDebug();
-                }
-                ARouter.init(application);
-            }
-
-            @Override
-            public void onTerminate(Application application) {
-
-            }
-        });
+        lifecycles.add(new AppLifecyclesImp());
     }
 
     @Override

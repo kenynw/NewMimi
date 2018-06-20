@@ -7,6 +7,8 @@
     android:orientation="vertical"
     >
 
+    <include layout="@layout/base_include_status_bar" />
+
     <android.support.v7.widget.Toolbar
         android:id="@id/base_toolbar"
         style="@style/ToolbarTheme"

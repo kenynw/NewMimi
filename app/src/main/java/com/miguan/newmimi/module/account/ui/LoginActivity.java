@@ -7,18 +7,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.miguan.newmimi.R;
 import com.miguan.newmimi.app.ARouterPaths;
+import com.miguan.newmimi.app.BaseActivity;
 import com.miguan.newmimi.module.account.UserContract;
 import com.miguan.newmimi.module.account.di.component.DaggerLoginComponent;
 import com.miguan.newmimi.module.account.di.module.LoginModule;
 import com.miguan.newmimi.module.account.model.bean.User;
 import com.miguan.newmimi.module.account.presenter.LoginPresenter;
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import javax.inject.Inject;
 
 import butterknife.OnClick;
 

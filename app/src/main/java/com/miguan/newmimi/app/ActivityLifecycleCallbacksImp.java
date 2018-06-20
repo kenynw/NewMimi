@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gyf.barlibrary.ImmersionBar;
 import com.miguan.newmimi.R;
 
 /**
@@ -16,8 +17,16 @@ import com.miguan.newmimi.R;
  * Created by Liaopeikun on 2018/6/15
  */
 public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecycleCallbacks {
+
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
+        ActivityBean activityBean = new ActivityBean();
+        initToolbar(activity);
+        initStatusBar(activity, activityBean);
+        activity.getIntent().putExtra(ExtraConstant.ACTIVITY_BEAN, activityBean);
+    }
+
+    private void initToolbar(Activity activity) {
         Toolbar toolbar = activity.findViewById(R.id.base_toolbar);
         if (toolbar != null) {
             if (activity instanceof AppCompatActivity) {
@@ -26,12 +35,7 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
                 ((AppCompatActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             }
 
-            View.OnClickListener onBackClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    activity.onBackPressed();
-                }
-            };
+            View.OnClickListener onBackClickListener = view -> activity.onBackPressed();
             View view = activity.findViewById(R.id.base_toolbar_back);
             if (view != null) {
                 view.setOnClickListener(onBackClickListener);
@@ -43,6 +47,19 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
             if (tvTitle != null && !TextUtils.isEmpty(activity.getTitle())) {
                 tvTitle.setText(activity.getTitle());
             }
+        }
+    }
+
+    private void initStatusBar(Activity activity, ActivityBean activityBean) {
+        View statusBar = activity.findViewById(R.id.base_status_bar);
+        if (statusBar != null) {
+            ImmersionBar immersionBar = ImmersionBar.with(activity)
+                    .transparentStatusBar()
+                    .statusBarDarkFont(true, 0.2f)
+                    .navigationBarEnable(false)
+                    .statusBarView(statusBar);
+            immersionBar.init();
+            activityBean.setImmersionBar(immersionBar);;
         }
     }
 
@@ -73,7 +90,12 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
+        ActivityBean activityBean = (ActivityBean) activity.getIntent().getSerializableExtra(ExtraConstant.ACTIVITY_BEAN);
+        if (activityBean != null) {
+            if (activityBean.getImmersionBar() != null) {
+                activityBean.getImmersionBar().destroy();
+            }
+        }
     }
 
 }
