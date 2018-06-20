@@ -51,7 +51,7 @@ import static com.jess.arms.utils.ThirdViewUtil.convertAutoView;
  * <a href="https://github.com/JessYanCoding">Follow me</a>
  * ================================================
  */
-public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivity implements IActivity, ActivityLifecycleable {
+public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivity implements IActivity, ActivityLifecycleable, IActivityConfig {
     protected final String TAG = this.getClass().getSimpleName();
     private final BehaviorSubject<ActivityEvent> mLifecycleSubject = BehaviorSubject.create();
     private Cache<String, Object> mCache;
@@ -129,4 +129,16 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     public boolean useFragment() {
         return true;
     }
+
+    /**
+     * 返回Activity的各项配置（任务栏颜色、Toolbar返回显示隐藏和Icon等），会在全局Activity生命周期监听{@link ActivityLifecycleCallbacksImp}使用
+     * 根据实际使用场景如果要修改配置直接重写这个方法并使用链式编程返回设置各个参数
+     *
+     * @return
+     */
+    @Override
+    public ActivityConfig getActivityConfig() {
+        return ActivityConfig.DEFAULT.clone();
+    }
+
 }

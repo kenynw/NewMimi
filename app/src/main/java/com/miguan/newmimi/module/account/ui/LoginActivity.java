@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.jess.arms.di.component.AppComponent;
 import com.miguan.newmimi.R;
 import com.miguan.newmimi.app.ARouterPaths;
+import com.miguan.newmimi.app.ActivityConfig;
 import com.miguan.newmimi.app.BaseActivity;
 import com.miguan.newmimi.module.account.UserContract;
 import com.miguan.newmimi.module.account.di.component.DaggerLoginComponent;
@@ -40,6 +41,12 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements UserC
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
 
+    }
+
+    @Override
+    public ActivityConfig getActivityConfig() {
+        return super.getActivityConfig()
+                .setStatusBarColor(R.color.colorAccent);
     }
 
     @OnClick(R.id.account_tv_login)

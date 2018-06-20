@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gyf.barlibrary.ImmersionBar;
@@ -20,13 +21,18 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-        ActivityBean activityBean = new ActivityBean();
-        initToolbar(activity);
-        initStatusBar(activity, activityBean);
-        activity.getIntent().putExtra(ExtraConstant.ACTIVITY_BEAN, activityBean);
+        ActivityConfig activityConfig;
+        if (activity instanceof IActivityConfig) {
+            activityConfig = ((IActivityConfig) activity).getActivityConfig();
+        } else {
+            activityConfig = new ActivityConfig();
+        }
+        initToolbar(activity, activityConfig);
+        initStatusBar(activity, activityConfig);
+        activity.getIntent().putExtra(ExtraConstant.ACTIVITY_BEAN, activityConfig);
     }
 
-    private void initToolbar(Activity activity) {
+    private void initToolbar(Activity activity, ActivityConfig activityConfig) {
         Toolbar toolbar = activity.findViewById(R.id.base_toolbar);
         if (toolbar != null) {
             if (activity instanceof AppCompatActivity) {
@@ -36,9 +42,17 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
             }
 
             View.OnClickListener onBackClickListener = view -> activity.onBackPressed();
-            View view = activity.findViewById(R.id.base_toolbar_back);
-            if (view != null) {
-                view.setOnClickListener(onBackClickListener);
+            ImageView ivBack = activity.findViewById(R.id.base_toolbar_back);
+            if (ivBack != null) {
+                if (activityConfig.mToolbarBackVisible) {
+                    ivBack.setVisibility(View.VISIBLE);
+                    ivBack.setOnClickListener(onBackClickListener);
+                    if (activityConfig.mToolbarBackRes > 0) {
+                        ivBack.setImageResource(activityConfig.mToolbarBackRes);
+                    }
+                } else {
+                    ivBack.setVisibility(View.GONE);
+                }
             } else {
                 toolbar.setNavigationOnClickListener(onBackClickListener);
             }
@@ -50,16 +64,20 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
         }
     }
 
-    private void initStatusBar(Activity activity, ActivityBean activityBean) {
+    private void initStatusBar(Activity activity, ActivityConfig activityConfig) {
         View statusBar = activity.findViewById(R.id.base_status_bar);
         if (statusBar != null) {
             ImmersionBar immersionBar = ImmersionBar.with(activity)
-                    .transparentStatusBar()
                     .statusBarDarkFont(true, 0.2f)
                     .navigationBarEnable(false)
                     .statusBarView(statusBar);
+            if (activityConfig.mStatusBarColor > 0) {
+                immersionBar.statusBarColor(activityConfig.mStatusBarColor);
+            } else {
+                immersionBar.transparentBar();
+            }
             immersionBar.init();
-            activityBean.setImmersionBar(immersionBar);;
+            activityConfig.setImmersionBar(immersionBar);;
         }
     }
 
@@ -90,10 +108,10 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        ActivityBean activityBean = (ActivityBean) activity.getIntent().getSerializableExtra(ExtraConstant.ACTIVITY_BEAN);
-        if (activityBean != null) {
-            if (activityBean.getImmersionBar() != null) {
-                activityBean.getImmersionBar().destroy();
+        ActivityConfig activityConfig = (ActivityConfig) activity.getIntent().getSerializableExtra(ExtraConstant.ACTIVITY_BEAN);
+        if (activityConfig != null) {
+            if (activityConfig.getImmersionBar() != null) {
+                activityConfig.getImmersionBar().destroy();
             }
         }
     }
