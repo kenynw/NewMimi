@@ -96,7 +96,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements UserC
 
     @Override
     public void killMyself() {
-
+        finish();
     }
 
     @Override

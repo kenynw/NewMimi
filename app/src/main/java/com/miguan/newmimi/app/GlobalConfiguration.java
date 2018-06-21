@@ -3,28 +3,16 @@ package com.miguan.newmimi.app;
 import android.app.Application;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
-import android.text.TextUtils;
 
-import com.blankj.utilcode.util.NetworkUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.module.GlobalConfigModule;
-import com.jess.arms.http.GlobalHttpHandler;
+import com.jess.arms.http.log.RequestInterceptor;
 import com.jess.arms.integration.ConfigModule;
-import com.miguan.newmimi.app.http.HttpResponseCode;
+import com.miguan.newmimi.BuildConfig;
 import com.miguan.newmimi.app.http.WrapperConverterFactory;
 
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import me.jessyan.rxerrorhandler.handler.listener.ResponseErrorListener;
-import okhttp3.CacheControl;
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.Response;
-import retrofit2.HttpException;
 
 /**
  * Copyright (c) 2018 Miguan Inc All rights reserved.
@@ -33,27 +21,22 @@ import retrofit2.HttpException;
 public class GlobalConfiguration implements ConfigModule {
     @Override
     public void applyOptions(Context context, GlobalConfigModule.Builder builder) {
+        if (!BuildConfig.LOG_DEBUG) { //Release 时,让框架不再打印 Http 请求和响应的信息
+            builder.printHttpLogLevel(RequestInterceptor.Level.NONE);
+        }
         //使用builder可以为框架配置一些配置信息
         builder.baseurl(Constant.BASE_API_URL)
-                .globalHttpHandler(new GlobalHttpHandler() {
-                    @Override
-                    public Response onHttpResultResponse(String httpResult, Interceptor.Chain chain, Response response) {
-                        return response;
-                    }
-
-                    @Override
-                    public Request onHttpRequestBefore(Interceptor.Chain chain, Request request) {
-                        if (!NetworkUtils.isConnected()) {
-                            request = request.newBuilder().cacheControl(CacheControl.FORCE_CACHE).build();
-                        }
-                        if (TextUtils.isEmpty(request.header("timestamp"))) {
-                            request = request.newBuilder()
-                                    .header("timestamp", String.valueOf(System.currentTimeMillis()))
-                                    .build();
-                        }
-                        return request;
-                    }
-                })
+//                //自定义图片加载逻辑,默认 GlideImageLoaderStrategy ,根据需求如有必要可实现 BaseImageLoaderStrategy自定义处理逻辑
+//                .imageLoaderStrategy(new GlideImageLoaderStrategy())
+//                //可根据当前项目的情况以及环境为框架某些部件提供自定义的缓存策略, 具有强大的扩展性
+//                .cacheFactory()
+//                //若觉得框架默认的打印格式并不能满足自己的需求, 可自行扩展自己理想的打印格式 (以下只是简单实现)
+//                .formatPrinter()
+                // 这里提供一个全局处理 Http 请求和响应结果的处理类,可以比客户端提前一步拿到服务器返回的结果,可以做一些操作,比如token超时,重新获取
+                .globalHttpHandler(new GlobalHttpHandlerImp())
+                // 用来处理 rxjava 中发生的所有错误,rxjava 中发生的每个错误都会回调此接口
+                // rxjava必要要使用ErrorHandleSubscriber(默认实现Subscriber的onError方法),此监听才生效
+                .responseErrorListener(new ResponseErrorListenerImp())
                 .gsonConfiguration((context12, gsonBuilder) -> {
                     gsonBuilder.serializeNulls() // 支持序列化null的参数
                             .enableComplexMapKeySerialization();// 支持将序列化key为object的map,默认只能序列化key为string的map
@@ -62,42 +45,16 @@ public class GlobalConfiguration implements ConfigModule {
                     retrofitBuilder.addConverterFactory(WrapperConverterFactory.create())
                             .build();
                 })
-                .okhttpConfiguration((context13, okhttpBuilder) -> {
+                .okhttpConfiguration((context13, okhttpBuilder) -> { // 自定义配置Okhttp的参数
                     okhttpBuilder.connectTimeout(60, TimeUnit.SECONDS)
                             .readTimeout(60, TimeUnit.SECONDS)
                             .writeTimeout(60, TimeUnit.SECONDS);
                 })
-                .responseErrorListener(new ResponseErrorListener() {
-                    @Override
-                    public void handleResponseError(Context context, Throwable t) {
-                        if (t instanceof UnknownHostException) {
-                            onResponseError(HttpResponseCode.ERROR_UNKNOWN_HOST, "网络不可用!");
-                        } else if (t instanceof SocketTimeoutException) {
-                            onResponseError(HttpResponseCode.ERROR_SOCKET_TIMEOUT, "请求网络超时");
-                        } else if (t instanceof HttpException) {
-                            convertStatusCode((HttpException) t);
-                        }
-                    }
-
-                    private void convertStatusCode(HttpException httpException) {
-                        String msg;
-                        if (httpException.code() == 500) {
-                            msg = "服务器发生错误";
-                        } else if (httpException.code() == 404) {
-                            msg = "请求地址不存在";
-                        } else if (httpException.code() == 403) {
-                            msg = "请求被服务器拒绝";
-                        } else if (httpException.code() == 307) {
-                            msg = "请求被重定向到其他页面";
-                        } else {
-                            msg = httpException.message();
-                        }
-                        onResponseError(httpException.code(), msg);
-                    }
-
-                    private void onResponseError(int code, String msg) {
-                        ToastUtils.showLong(msg);
-                    }
+                .rxCacheConfiguration((context1, rxCacheBuilder) -> {//这里可以自己自定义配置 RxCache 的参数
+                    rxCacheBuilder.useExpiredDataIfLoaderNotAvailable(true);
+                    // 想自定义 RxCache 的缓存文件夹或者解析方式, 如改成 fastjson, 请 return rxCacheBuilder.persistence(cacheDirectory, new FastJsonSpeaker());
+                    // 否则请 return null;
+                    return null;
                 });
     }
 

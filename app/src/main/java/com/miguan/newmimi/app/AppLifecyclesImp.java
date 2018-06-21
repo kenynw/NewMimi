@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.Utils;
 import com.jess.arms.base.App;
 import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.component.AppComponent;
+import com.jess.arms.utils.ArmsUtils;
 import com.miguan.newmimi.BuildConfig;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -28,6 +29,9 @@ public class AppLifecyclesImp implements AppLifecycles {
 
     @Override
     public void onCreate(Application application) {
+        if (LeakCanary.isInAnalyzerProcess(application)) {
+            return;
+        }
         initCanary(application);
         initLog();
         Utils.init(application);
@@ -42,11 +46,8 @@ public class AppLifecyclesImp implements AppLifecycles {
 
     // LeakCanary内存检测
     private void initCanary(Application application) {
-        if (LeakCanary.isInAnalyzerProcess(application)) {
-            return;
-        }
         if (application instanceof App) {
-            AppComponent appComponent = ((App) application).getAppComponent();
+            AppComponent appComponent = ArmsUtils.obtainAppComponentFromContext(application);
             appComponent.extras().put(RefWatcher.class.getName(),
                     BuildConfig.USE_CANARY ? LeakCanary.install(application) : RefWatcher.DISABLED);
         }
