@@ -9,10 +9,10 @@ import com.miguan.newmimi.module.account.model.bean.User;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import me.jessyan.rxerrorhandler.handler.RetryWithDelayOfFlowable;
+import me.jessyan.rxerrorhandler.handler.RetryWithDelay;
 
 @ActivityScope
 public class LoginModel extends BaseModel implements UserContract.Model {
@@ -23,11 +23,11 @@ public class LoginModel extends BaseModel implements UserContract.Model {
     }
 
     @Override
-    public Flowable<User> login(String mobile, String password) {
-        return mRepositoryManager.obtainCacheService(AccountService.class)
-                .login(mobile, password)
+    public Observable<User> login(String mobile, String password, String deviceId) {
+        return mRepositoryManager.obtainRetrofitService(AccountService.class)
+                .login(mobile, password, deviceId)
+                .retryWhen(new RetryWithDelay(3, 2))
                 .subscribeOn(Schedulers.io())
-                .retryWhen(new RetryWithDelayOfFlowable(3, 2))
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

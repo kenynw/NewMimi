@@ -6,6 +6,8 @@ package com.miguan.newmimi.app;
  */
 public interface ExtraConstant {
 
-    String ACTIVITY_BEAN = "activity_bean";
+    String IS_ACTIVITY_INIT = "is_activity_init"; // 是否初始化
+
+    String ACTIVITY_CONFIG = "activity_config";
 
 }

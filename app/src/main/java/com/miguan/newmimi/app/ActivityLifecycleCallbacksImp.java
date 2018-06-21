@@ -21,15 +21,23 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-        ActivityConfig activityConfig;
-        if (activity instanceof IActivityConfig) {
-            activityConfig = ((IActivityConfig) activity).getActivityConfig();
-        } else {
-            activityConfig = new ActivityConfig();
+
+    }
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        if (!activity.getIntent().getBooleanExtra(ExtraConstant.IS_ACTIVITY_INIT, false)) {
+            activity.getIntent().putExtra(ExtraConstant.IS_ACTIVITY_INIT, true);
+            ActivityConfig activityConfig;
+            if (activity instanceof IActivityConfig) {
+                activityConfig = ((IActivityConfig) activity).getActivityConfig();
+            } else {
+                activityConfig = ActivityConfig.getDefault();
+            }
+            initToolbar(activity, activityConfig);
+            initStatusBar(activity, activityConfig);
+            activity.getIntent().putExtra(ExtraConstant.ACTIVITY_CONFIG, activityConfig);
         }
-        initToolbar(activity, activityConfig);
-        initStatusBar(activity, activityConfig);
-        activity.getIntent().putExtra(ExtraConstant.ACTIVITY_BEAN, activityConfig);
     }
 
     private void initToolbar(Activity activity, ActivityConfig activityConfig) {
@@ -82,11 +90,6 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
     public void onActivityResumed(Activity activity) {
 
     }
@@ -108,7 +111,7 @@ public class ActivityLifecycleCallbacksImp implements Application.ActivityLifecy
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        ActivityConfig activityConfig = (ActivityConfig) activity.getIntent().getSerializableExtra(ExtraConstant.ACTIVITY_BEAN);
+        ActivityConfig activityConfig = (ActivityConfig) activity.getIntent().getSerializableExtra(ExtraConstant.ACTIVITY_CONFIG);
         if (activityConfig != null) {
             if (activityConfig.getImmersionBar() != null) {
                 activityConfig.getImmersionBar().destroy();

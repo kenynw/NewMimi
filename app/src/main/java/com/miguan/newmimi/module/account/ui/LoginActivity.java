@@ -7,11 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.jess.arms.base.BaseActivity;
 import com.jess.arms.di.component.AppComponent;
 import com.miguan.newmimi.R;
 import com.miguan.newmimi.app.ARouterPaths;
 import com.miguan.newmimi.app.ActivityConfig;
-import com.miguan.newmimi.app.BaseActivity;
+import com.miguan.newmimi.app.IActivityConfig;
 import com.miguan.newmimi.module.account.UserContract;
 import com.miguan.newmimi.module.account.di.component.DaggerLoginComponent;
 import com.miguan.newmimi.module.account.di.module.LoginModule;
@@ -21,7 +22,7 @@ import com.miguan.newmimi.module.account.presenter.LoginPresenter;
 import butterknife.OnClick;
 
 @Route(path = ARouterPaths.USER_LOGIN)
-public class LoginActivity extends BaseActivity<LoginPresenter> implements UserContract.LoginView {
+public class LoginActivity extends BaseActivity<LoginPresenter> implements UserContract.LoginView, IActivityConfig {
 
     @Override
     public void setupActivityComponent(@NonNull AppComponent appComponent) {
@@ -43,15 +44,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements UserC
 
     }
 
-    @Override
-    public ActivityConfig getActivityConfig() {
-        return super.getActivityConfig()
-                .setStatusBarColor(R.color.colorAccent);
-    }
-
     @OnClick(R.id.account_tv_login)
     void clickLogin() {
-        mPresenter.validateCredentials("", "");
+        mPresenter.validateCredentials("15375870891", "123456");
     }
 
     @Override
@@ -102,6 +97,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements UserC
     @Override
     public void killMyself() {
 
+    }
+
+    @Override
+    public ActivityConfig getActivityConfig() {
+        return ActivityConfig.getDefault().setStatusBarColor(R.color.colorAccent);
     }
 
 }

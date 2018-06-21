@@ -6,7 +6,7 @@ import com.jess.arms.mvp.IModel;
 import com.jess.arms.mvp.IView;
 import com.miguan.newmimi.module.account.model.bean.User;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public interface UserContract {
 
@@ -19,7 +19,7 @@ public interface UserContract {
     }
 
     interface Model extends IModel {
-        Flowable<User> login(String mobile, String password);
+        Observable<User> login(String mobile, String password, String deviceId);
     }
 
 }

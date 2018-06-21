@@ -34,7 +34,7 @@ public class GlobalConfiguration implements ConfigModule {
     @Override
     public void applyOptions(Context context, GlobalConfigModule.Builder builder) {
         //使用builder可以为框架配置一些配置信息
-        builder.baseurl(Constant.BASE_URL)
+        builder.baseurl(Constant.BASE_API_URL)
                 .globalHttpHandler(new GlobalHttpHandler() {
                     @Override
                     public Response onHttpResultResponse(String httpResult, Interceptor.Chain chain, Response response) {

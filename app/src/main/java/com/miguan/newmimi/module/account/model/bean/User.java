@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class User implements Parcelable {
 
-    private String userId;
+    String id;
 
     @Override
     public int describeContents() {
@@ -14,14 +14,14 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.userId);
+        dest.writeString(this.id);
     }
 
     public User() {
     }
 
     protected User(Parcel in) {
-        this.userId = in.readString();
+        this.id = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

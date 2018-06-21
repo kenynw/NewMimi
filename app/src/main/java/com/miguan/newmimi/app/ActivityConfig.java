@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Copyright (c) 2018 Miguan Inc All rights reserved.
  * Created by Liaopeikun on 2018/6/19
  *
- * 所有继承{@link BaseActivity}的Activity的配置
+ * 用于Activity的配置，需要实现{@link IActivityConfig}才能生效
  * 后根据具体使用业务进行扩展
  */
 public class ActivityConfig implements Serializable, Cloneable {
@@ -25,6 +25,10 @@ public class ActivityConfig implements Serializable, Cloneable {
     @DrawableRes int mToolbarBackRes; // 返回图标资源
 
     @ColorRes int mStatusBarColor; // 任务栏颜色
+
+    public static ActivityConfig getDefault() {
+        return DEFAULT.clone();
+    }
 
     public ImmersionBar getImmersionBar() {
         return mImmersionBar;

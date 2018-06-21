@@ -1,12 +1,12 @@
 package com.miguan.newmimi.module.account.di.module;
 
-import dagger.Module;
-import dagger.Provides;
-
 import com.jess.arms.di.scope.ActivityScope;
 import com.miguan.newmimi.module.account.UserContract;
 import com.miguan.newmimi.module.account.model.LoginModel;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class LoginModule {
@@ -31,6 +31,12 @@ public class LoginModule {
     @Provides
     UserContract.Model provideLoginModel(LoginModel model) {
         return model;
+    }
+
+    @ActivityScope
+    @Provides
+    RxPermissions provideRxPermissions() {
+        return new RxPermissions(this.view.getActivity());
     }
 
 }

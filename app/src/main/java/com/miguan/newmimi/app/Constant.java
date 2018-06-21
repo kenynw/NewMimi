@@ -12,4 +12,6 @@ public interface Constant {
 
     String BASE_URL = "http://" + (DEBUG ? "beta." : "") + "api.91mmliao.com/";
 
+    String BASE_API_URL = BASE_URL + "LiaoBanApi/";
+
 }

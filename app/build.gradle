@@ -36,6 +36,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
@@ -58,7 +59,7 @@ dependencies {
     annotationProcessor rootProject.ext.dependencies["dagger-compiler"]
 
     implementation 'me.jessyan:arms:2.4.1'
-    api 'com.blankj:utilcode:1.7.1'
+    api 'com.blankj:utilcode:1.17.0'
 
     // 任务栏
     api 'com.gyf.barlibrary:barlibrary:2.3.0'
