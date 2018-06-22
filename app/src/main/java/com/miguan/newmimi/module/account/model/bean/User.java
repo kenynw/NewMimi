@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class User implements Parcelable {
 
-    String id;
+    public String id;
 
     @Override
     public int describeContents() {

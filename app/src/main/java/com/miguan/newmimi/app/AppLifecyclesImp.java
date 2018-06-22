@@ -11,6 +11,7 @@ import com.jess.arms.base.delegate.AppLifecycles;
 import com.jess.arms.di.component.AppComponent;
 import com.jess.arms.utils.ArmsUtils;
 import com.miguan.newmimi.BuildConfig;
+import com.miguan.newmimi.util.MimiUtils;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -32,6 +33,7 @@ public class AppLifecyclesImp implements AppLifecycles {
         if (LeakCanary.isInAnalyzerProcess(application)) {
             return;
         }
+        MimiUtils.init(application);
         initCanary(application);
         initLog();
         Utils.init(application);

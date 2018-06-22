@@ -43,7 +43,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // support
-    implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["constraint-layout"]
 
     // test
